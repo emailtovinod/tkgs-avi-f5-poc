@@ -1,0 +1,13 @@
+apiVersion: projectcontour.io/v1
+kind: HTTPProxy
+metadata:
+  name: ingress-nihao
+spec:
+  virtualhost:
+    fqdn: nihao.homelab.tanzu
+  routes:
+    - conditions:
+      - prefix: /nihao
+      services:
+        - name: nihao
+          port: 80

@@ -1,0 +1,46 @@
+apiVersion: cluster.x-k8s.io/v1beta1
+kind: Cluster
+metadata:
+  name: dev-cluster-1
+  namespace: tkg-dev-ns
+spec:
+  clusterNetwork:
+    services:
+      cidrBlocks: ["198.51.100.0/12"]
+    pods:
+      cidrBlocks: ["192.0.2.0/16"]
+    serviceDomain: "cluster.local"
+  topology:
+    class: tanzukubernetescluster
+    version: v1.26.5+vmware.2-fips.1-tkg.1
+    controlPlane:
+      replicas: 3
+    workers:
+      machineDeployments:
+        - class: node-pool
+          name: node-pool-1
+          replicas: 1
+          variables:
+            overrides:
+            - name: vmClass
+              value: best-effort-large
+    variables:
+      - name: vmClass
+        value: best-effort-small
+      - name: storageClass
+        value: tkg-pol
+      - name: defaultStorageClass
+        value: tkg-pol
+      - name: nodePoolVolumes
+        value:
+          - name: containerd
+            capacity:
+              storage: 50Gi
+            mountPath: /var/lib/containerd
+            storageClass: tkg-pol
+          - name: kubelet
+            capacity:
+              storage: 50Gi
+            mountPath: /var/lib/kubelett
+            storageClass: tkg-pol
+ 
